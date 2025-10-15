@@ -1,13 +1,15 @@
 interface ChatInputProps {
   value: string;
   onChange: (value: string) => void;
-  onSendMessage: (message: string) => void; //TODO: Implement and remove optional
+  onSendMessage: (message: string) => void;
+  isLoading: boolean;
 }
 
 export default function ChatInput({
   value,
   onChange,
   onSendMessage,
+  isLoading,
 }: ChatInputProps) {
   return (
     <div className="chat-input">
@@ -25,7 +27,8 @@ export default function ChatInput({
       />
       <button
         className="chat-input-button"
-        onClick={() => onSendMessage?.(value)}
+        onClick={() => onSendMessage(value)}
+        disabled={isLoading}
       >
         Send
       </button>

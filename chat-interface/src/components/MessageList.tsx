@@ -1,31 +1,30 @@
 import clsx from "clsx";
-
-export interface Message {
-  id: string;
-  content: string;
-  role: "user" | "assistant";
-}
+import { type Message } from "../types";
 
 interface MessageListProps {
   messages: Message[];
   endRef: React.RefObject<HTMLDivElement | null>;
+  isLoading: boolean;
 }
 
-export default function MessageList({ messages, endRef }: MessageListProps) {
+export default function MessageList({
+  messages,
+  endRef,
+  isLoading,
+}: MessageListProps) {
   return (
-    <div className="chat-messages">
+    <ul className="chat-messages">
       {messages.map((message) => (
-        <li
-          key={message.id}
-          className={clsx(
-            "message",
-            message.role
-          )}
-        >
+        <li key={message.id} className={clsx("message", message.role)}>
           <p>{message.content}</p>
         </li>
       ))}
+      {isLoading && (
+        <li className="message assistant">
+          <p>Loading...</p>
+        </li>
+      )}
       <div ref={endRef} />
-    </div>
+    </ul>
   );
 }

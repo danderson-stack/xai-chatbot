@@ -1,7 +1,7 @@
 import MessageList from "./MessageList";
 import ChatInput from "./ChatInput";
 import { useState, useRef, useEffect } from "react";
-import { type Message } from "./MessageList";
+import { type Message } from "../types";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 
 function serverResponse(message: string): Promise<string> {
@@ -21,20 +21,34 @@ export default function Chat() {
     "messages",
     []
   );
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
   const [input, setInput] = useState<string>("");
   const endRef = useRef<HTMLDivElement | null>(null);
 
+  const addMessage = (message: Message) => {
+    setSavedMessages((prevMessages) => [...prevMessages, message]);
+  };
+
   function handleSendMessage(message: string) {
+    setError(null);
+    setLoading(true);
+    const messageId = crypto.randomUUID();
+    addMessage({ id: messageId, content: message, role: "user" });
+    setInput("");
     serverResponse(message)
       .then((response) => {
-        setSavedMessages([
-          ...savedMessages,
-          { id: message, content: message, role: "user" },
-          { id: response, content: response, role: "assistant" },
-        ]);
+        addMessage({
+          id: `response-${messageId}`,
+          content: response,
+          role: "assistant",
+        });
       })
       .catch((error) => {
-        alert(error.message);
+        setError(error.message);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   }
 
@@ -44,12 +58,18 @@ export default function Chat() {
 
   return (
     <div className="chat-container">
-      <MessageList messages={savedMessages} endRef={endRef} />
+      <MessageList
+        messages={savedMessages}
+        endRef={endRef}
+        isLoading={loading}
+      />
       <ChatInput
         value={input}
         onChange={setInput}
         onSendMessage={handleSendMessage}
+        isLoading={loading}
       />
+      {error && <p className="error-alert">{error}</p>}
     </div>
   );
 }
