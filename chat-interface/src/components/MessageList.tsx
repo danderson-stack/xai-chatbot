@@ -3,7 +3,7 @@ import { type Message } from "../types";
 
 interface MessageListProps {
   messages: Message[];
-  endRef: React.RefObject<HTMLDivElement | null>;
+  endRef: React.RefObject<HTMLLIElement | null>;
   isLoading: boolean;
 }
 
@@ -24,7 +24,7 @@ export default function MessageList({
           <p>Loading...</p>
         </li>
       )}
-      <div ref={endRef} />
+      <li aria-hidden="true" aria-live="polite" ref={endRef} />
     </ul>
   );
 }

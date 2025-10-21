@@ -1,3 +1,19 @@
+
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
+
+.title {
+  font-size: 40px;
+  font-weight: 800;
+  margin: 20px;
+  text-align: center;
+}
+
 .chat-container {
   display: flex;
   flex-direction: column;
@@ -10,6 +26,7 @@
   width: calc(100vw - 40px);
   height: calc(84vh - 40px);
 }
+
 
 .chat-messages {
   width: 100%;
@@ -26,7 +43,6 @@
   padding-right: 8px;
   padding-left: 8px;
   display: flex;
-  text-align: center;
 }
 
 
@@ -34,7 +50,7 @@
   background-color: lightblue;
   justify-content: flex-start;
   align-self: flex-start;
-
+  text-align: left;
 }
 
 .assistant {
@@ -42,6 +58,7 @@
   justify-content: flex-end;
   background-color: lightgreen;
   align-self: flex-end;
+  text-align: right;
 }
 
 .chat-input {

@@ -3,8 +3,8 @@ import Chat from "./components/Chat";
 
 function App() {
   return (
-    <main>
-      <h1>Chat Interface</h1>
+    <main className="main">
+      <h1 className="title">Chat Interface</h1>
       <Chat />
     </main>
   );

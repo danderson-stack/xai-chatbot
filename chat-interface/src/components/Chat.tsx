@@ -3,18 +3,7 @@ import ChatInput from "./ChatInput";
 import { useState, useRef, useEffect } from "react";
 import { type Message } from "../types";
 import { useLocalStorage } from "../hooks/useLocalStorage";
-
-function serverResponse(message: string): Promise<string> {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      if (message.trim() === "42") {
-        reject(new Error("Message content '42' is not allowed."));
-      } else {
-        resolve(`Your message ${message} was recieved`);
-      }
-    }, 1500);
-  });
-}
+import { serverResponse } from "../utils/serverUtils";
 
 export default function Chat() {
   const [savedMessages, setSavedMessages] = useLocalStorage<Message[]>(
@@ -24,7 +13,7 @@ export default function Chat() {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [input, setInput] = useState<string>("");
-  const endRef = useRef<HTMLDivElement | null>(null);
+  const endRef = useRef<HTMLLIElement | null>(null);
 
   const addMessage = (message: Message) => {
     setSavedMessages((prevMessages) => [...prevMessages, message]);

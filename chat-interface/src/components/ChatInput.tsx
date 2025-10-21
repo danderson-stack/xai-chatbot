@@ -11,6 +11,13 @@ export default function ChatInput({
   onSendMessage,
   isLoading,
 }: ChatInputProps) {
+  const handleSendMessage = () => {
+    if (value.trim() === "" || isLoading) {
+      return;
+    }
+    onSendMessage(value);
+    onChange("");
+  };
   return (
     <div className="chat-input">
       <textarea
@@ -20,14 +27,14 @@ export default function ChatInput({
         onKeyDown={(e) => {
           if (e.key === "Enter" && !e.shiftKey) {
             // The default behavior when pressing Enter in a textarea is to insert a new line.
-            onSendMessage(value);
+            handleSendMessage();
             e.preventDefault();
           }
         }}
       />
       <button
         className="chat-input-button"
-        onClick={() => onSendMessage(value)}
+        onClick={handleSendMessage}
         disabled={isLoading}
       >
         Send
