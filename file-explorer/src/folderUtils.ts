@@ -1,122 +1,30 @@
 import type { FolderNode, FileNode, Node } from "./types";
-import { isFile } from "./typeUtils";
+import { isFile, isFolder } from "./typeUtils";
 import { folder, file } from "./typeUtils";
 
 
 /** Used to make sure the first file provided is preSelected by the builder */
 export const getFirstFile = (folder: FolderNode): FileNode | null => {
     const children = folder.children;
+    let firstFile = null;
     for (const child of children) {
       if (isFile(child)) {
-        return child;
+        firstFile = child;
+        break;
       }
     }
-    if (children.length > 0) {
-      return getFirstFile(children[0] as FolderNode);
-    } else {
-      return null;
+    if (children.length > 0 && firstFile === null) {
+      for(const child of children) {
+        if(isFolder(child)) {
+          getFirstFile(child as FolderNode);
+        }
+        if(firstFile !== null) {
+          break;
+        }
+      }
     }
+    return firstFile;
   };
-
-
-// ===== Public API =====
-/**
- * Build a folder tree from a list of file paths.
- * - All paths must share a single root segment.
- * - Throws on path conflicts (file↔folder) or duplicate files.
- */
-// export function getFolderStructureFromFiles(files: string[]): FolderNode {
-//   if(files.length === 0) {
-//     throw new Error(
-//       "We must have at least 1 file in the project directory"
-//     )
-//   }
-//   const roots: string[] = files.map(p=>split(p)[0])
-//   if(roots.length !== 1) {
-//     throw new Error(
-//       `There must be only 1 root in the array. Roots: ${roots.join(', ')}`
-//     )
-//   }
-//   const rootName = roots[0];
-
-
-//   // TODO: initialize root FolderNode
-//   const rootFolder = folder(rootName, [])
-
-//   // Internal indices (you fill how they’re used):
-//   // - Map from FULL folder path -> FolderNode (prevents collisions)
-//   // - Map from FolderNode -> Map<childName, Node> (fast child lookup)
-//   const folderByFullPath = new Map<string, FolderNode>();
-//   const childIndex = new Map<FolderNode, Map<string, Node>>();
-
-//   // TODO: register root in both maps
-//   folderByFullPath.set(rootName, rootFolder);
-//   childIndex.set(rootFolder, new Map<string, Node>())
-
-//   // Helpers you’ll implement (below)
-//   const split = (p: string) => p.split('/').filter(Boolean);
-
-//   const ensureFolder = (
-//     parent: FolderNode,
-//     parentFullPath: string,
-//     segment: string
-//   ): FolderNode => {
-//     // - look up child by name via childIndex.get(parent)
-//     const index = childIndex.get(parent);
-
-//     const idx = index?.get(parentFullPath);
-//     // - if exists:
-//     if(idx) {
-//       if(isFile(idx)) {
-//         throw new Error("This folder is already saved as a file!")
-//       } else {
-//         return idx;
-//       }
-//     } else {
-//       const newFolder = folder(segment, []);
-//       parent.children.push(newFolder);
-//       index?.set(parentFullPath, newFolder)
-//       folderByFullPath.set(parentFullPath, newFolder);
-//       return newFolder;
-//     }
-//   };
-
-//   const addPath = (filePath: string, rootName: string, root: FolderNode) => {
-//     // TODO:
-//     const segments = filePath.split('/').filter(Boolean);
-
-//     if(segments[0] !== rootName) {
-//       throw new Error("Root does not match!")
-//     }
-//     let currSegment = rootName;
-//     let currParent = rootFolder;
-//     for(let i = 1; i<segments.length-2; i++) {
-//       currSegment = currSegment.concat(segments[i])
-//       const nextFolder = ensureFolder(currParent, currSegment, segments[i])
-//       currParent = nextFolder;
-//     }
-
-//     const newFile = file(segments[segments.length-1], "")
-//     // if(childIdx.get(newFile,))
-//     currParent.children.push(newFile);
-//     // folderByFullPath.set(newFile.name, )
-//     // - split segments
-//     // - verify first segment === rootName (throw if mismatch)
-//     // - walk intermediate segments with ensureFolder(...)
-//     // - finally add file leaf:
-//     //    - if name already exists and is folder -> throw
-//     //    - if name already exists and is file  -> throw duplicate
-//     //    - else create file node, push, index in childIndex
-//   };
-
-//   // TODO: loop over files and call addPath
-//   for(const file of files) {
-//     addPath(file, rootName, rootFolder);
-//   }
-//   // TODO: return root
-//   return rootFolder;
-// }
-
 
 
 export function getFolderStructureFromFiles(files: string[]): FolderNode {
@@ -178,7 +86,7 @@ export function getFolderStructureFromFiles(files: string[]): FolderNode {
       let current = root;
       let currentFull = rootName;
 
-      for(let i = 1; i<parts.length-2; i++) {
+      for(let i = 1; i<parts.length-1; i++) {
         const segment = parts[i];
         currentFull = `${currentFull}/${segment}`;
         current = ensureFolder(currentFull, segment, current)

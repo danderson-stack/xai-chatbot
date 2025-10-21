@@ -1,8 +1,8 @@
-import type { FileNode, FolderNode, FileOrFolder } from "./types";
+import type { FileNode, FolderNode, Node } from "./types";
 
 // ------- Type guards -------
-export const isFile = (n: FileOrFolder): n is FileNode => n.type === "file";
-export const isFolder = (n: FileOrFolder): n is FolderNode => n.type === "folder";
+export const isFile = (n: Node): n is FileNode => n.type === "file";
+export const isFolder = (n: Node): n is FolderNode => n.type === "folder";
 
 
 // -------- Safe factories --------
@@ -12,7 +12,7 @@ export function file(name: string, content: string): FileNode {
   
 export function folder(
     name: string,
-    children: FileOrFolder[] = []
+    children: Node[] = []
 ): FolderNode {
     return { type: "folder", name, children, id: crypto.randomUUID() };
 }

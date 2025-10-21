@@ -1,6 +1,3 @@
-// Discriminator
-// type FileOrFolderType = "file" | "folder";
-
 // Leaf/file node: may NOT have `children`
 export type FileNode = {
   id: string;

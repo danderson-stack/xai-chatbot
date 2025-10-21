@@ -1,43 +1,35 @@
 import { useState } from "react";
 import type { FolderNode, FileNode } from "../types";
 import { isFolder, isFile } from "../typeUtils";
-import { FaChevronUp, FaChevronDown, FaFile, FaCheck } from "react-icons/fa";
+import { FaChevronUp, FaChevronDown } from "react-icons/fa";
+import File from "./File";
 import styled from "styled-components";
+import { StyledNode, StyledIcon } from "./sharedStyles";
 
-const StyledFolder = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-start;
-  padding: 2px;
-  border: 1px solid #ccc;
-  cursor: pointer;
+const StyledFolder = styled(StyledNode)<{ depth?: number }>`
+  padding-left: ${(props) => (props.depth ? `${props.depth * 10}px` : "0")};
 `;
 
-const StyledIcon = styled.div`
-  display: flex;
-  margin-right: 10px;
-  margin-left: 10px;
-  align-items: center;
-  justify-content: center;
-`;
+interface FolderProps {
+  folder: FolderNode;
+  onFileClick: (fileNode: FileNode) => void;
+  isRoot?: boolean;
+  selectedFileId: string | null;
+  depth?: number;
+}
 
 export default function Folder({
   folder,
   isRoot = false,
   onFileClick,
   selectedFileId,
-}: {
-  folder: FolderNode;
-  onFileClick: (fileNode: FileNode) => void;
-  isRoot?: boolean;
-  selectedFileId: string | null;
-}) {
+  depth = 0,
+}: FolderProps) {
   const [isExpanded, setIsExpanded] = useState(isRoot ? true : false);
 
   return (
     <div>
-      <StyledFolder onClick={() => setIsExpanded(!isExpanded)}>
+      <StyledFolder depth={depth} onClick={() => setIsExpanded(!isExpanded)}>
         <StyledIcon>
           {isExpanded ? <FaChevronUp size={16} /> : <FaChevronDown size={16} />}
         </StyledIcon>
@@ -52,21 +44,18 @@ export default function Folder({
                 key={child.name}
                 folder={child}
                 onFileClick={onFileClick}
+                depth={depth + 1}
               />
             );
           } else if (isFile(child)) {
             return (
-              <StyledFolder key={child.name} onClick={() => onFileClick(child)}>
-                <StyledIcon>
-                  <FaFile size={16} />
-                </StyledIcon>
-                {child.name}
-                {selectedFileId === child.id && (
-                  <StyledIcon>
-                    <FaCheck size={16} />
-                  </StyledIcon>
-                )}
-              </StyledFolder>
+              <File
+                selectedFileId={selectedFileId}
+                key={child.name}
+                file={child}
+                onFileClick={onFileClick}
+                depth={depth + 1}
+              />
             );
           }
           return null;
