@@ -9,21 +9,19 @@ export function useTaskBoardData() {
     
     
     useEffect(() => {
-        setTimeout(() => {
-            const stored = localStorage.getItem("taskBoard");
-            if (stored) {
-                try {
-                    const parsed: TaskBoardData = JSON.parse(stored);
-                    setBoard(parsed);
-                } catch (error) {
-                    console.error("Error parsing board from localStorage:", error);
-                    setBoard(initialEmptyBoard);
-                }
-            } else {
+        const stored = localStorage.getItem("taskBoard");
+        if (stored) {
+            try {
+                const parsed: TaskBoardData = JSON.parse(stored);
+                setBoard(parsed);
+            } catch (error) {
+                console.error("Error parsing board from localStorage:", error);
                 setBoard(initialEmptyBoard);
             }
-            setIsLoading(false);
-        }, 700); // Simulate loading for 700ms so loading UI appears
+        } else {
+            setBoard(initialEmptyBoard);
+        }
+        setIsLoading(false);
     }, []);
     
     function loadBoardFromLocalStorage(): TaskBoardData {
@@ -46,6 +44,11 @@ export function useTaskBoardData() {
         setBoard(next);
     }
 
+    /**
+     * Update a task in the board 
+     * @param source - The source column and index of the task
+     * @param destination - The destination column and index of the task
+    */
     function updateTask(
       source: { droppableId: string; index: number },
       destination: { droppableId: string; index: number }

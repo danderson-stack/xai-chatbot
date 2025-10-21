@@ -22,6 +22,7 @@ export default function TaskBoard() {
     if (!destination) {
       return;
     }
+    // if the destination is the same as the source, do not update the task
     if (
       destination.droppableId === source.droppableId &&
       destination.index === source.index

@@ -16,9 +16,9 @@ export default function CreateTaskModal() {
 
   function addNewTask(e: React.FormEvent) {
     e.preventDefault();
-    setTaskContent("");
     setSelectedColumnType(columnTypes[0].value);
     addTask(selectedColumnType, taskContent);
+    setTaskContent("");
     modal.hide();
   }
 
@@ -28,6 +28,7 @@ export default function CreateTaskModal() {
       open={modal.visible}
       okText="Add new task"
       onOk={addNewTask}
+      okButtonProps={{ disabled: !taskContent.trim() }}
       onCancel={() => modal.hide()}
       afterClose={() => modal.remove()}
     >
@@ -53,7 +54,6 @@ export default function CreateTaskModal() {
           onChange={(e) => setTaskContent(e.target.value)}
           placeholder="Enter task details..."
           style={{ width: "100%", marginTop: "4px" }}
-          required
         />
       </label>
     </Modal>
